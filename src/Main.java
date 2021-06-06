@@ -15,28 +15,26 @@ public final class Main
 
         String filename = args[0];
         String out_filename = filename + "_out.txt";
-        try
+
+        try (
+            var reader = new BufferedReader(new FileReader(filename));
+            var writer = new BufferedWriter(new FileWriter(out_filename))
+        )
         {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(out_filename));
             for (String line = reader.readLine(); line != null; line = reader.readLine())
             {
                 writer.append(NumbersFromRussian.process(line).toString());
             }
-            reader.close();
-            writer.close();
         }
         catch (FileNotFoundException e)
         {
             System.out.println("File not found exception!\n" + e.getMessage());
             Thread.sleep(1000);
-            return;
         }
         catch (IOException e)
         {
             System.out.println("IO exception!\n" + e.getMessage());
             Thread.sleep(1000);
-            return;
         }
 
         System.out.println("Finished! Result:" + out_filename);
