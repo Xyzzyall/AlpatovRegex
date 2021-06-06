@@ -11,4 +11,4 @@ cache:
 
 script:
   - java --version
-#  - mvn clean install
+  - mvn clean install
