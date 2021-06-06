@@ -4,11 +4,11 @@ import java.util.regex.Pattern;
 public class NumbersFromRussian
 {
     protected static RegexRule[] rules = {
-            new RegexRule("", "0"),
-            new RegexRule("", "1"),
-            new RegexRule("", "2"),
-            new RegexRule("", "3"),
-            new RegexRule("", "4"),
+            new RegexRule("[a]", "0", -1),
+            new RegexRule("[b]", "1", -1),
+            new RegexRule("[c]", "2", -1),
+            new RegexRule("[d]", "3", -1),
+            /*new RegexRule("", "4"),
             new RegexRule("", "5"),
             new RegexRule("", "6"),
             new RegexRule("", "7"),
@@ -32,7 +32,7 @@ public class NumbersFromRussian
             new RegexRule("", "70"),
             new RegexRule("", "80"),
             new RegexRule("", "90"),
-            new RegexRule("", "100"),
+            new RegexRule("", "100"),*/
     };
 
     protected String text;
@@ -47,15 +47,17 @@ public class NumbersFromRussian
         for (String word:
              from.split(" ")) //todo переделать на регекс со знаками препинания
         {
-            boolean passed = false;
-            while (check_index > 0)
+            boolean finded = false;
+            while (check_index >= 0)
             {
                 RegexRule rule = rules[check_index];
                 try
                 {
+                    String parsed = rule.process(word);
                     if (res == -1) res = 0; //число найдено -- снимаем флаг
-                    res += Integer.parseInt(rule.process(word));
-                    passed = true;
+                    res += Integer.parseInt(parsed);
+                    check_index = rule.success_next_index;
+                    finded = true;
                     break;
                 }
                 catch (RegexRule.NoMatch noMatch)
@@ -63,20 +65,23 @@ public class NumbersFromRussian
                     check_index--;
                 }
             }
-            if (!passed)
+
+            if (check_index < 0)
             {
-                if (res != -1) //если найдено число, добавить его, иначе проигнорировать
+                if (res >= 0)
                 {
                     text_processed.append(res).append(' ');
                 }
-                text_processed.append(word).append(' ');
-
+                if (!finded)
+                {
+                    text_processed.append(word).append(' ');
+                }
                 res = -1;
                 check_index = rules.length - 1;
             }
         }
 
-        if (res != -1)
+        if (res >= 0)
         {
             text_processed.append(res);
         }
@@ -89,7 +94,7 @@ public class NumbersFromRussian
     @Override
     public String toString()
     {
-        return super.toString();
+        return this.text;
     }
 
     public static NumbersFromRussian process(String from)
@@ -101,10 +106,12 @@ public class NumbersFromRussian
     {
         protected Pattern pattern;
         protected String replace_to;
-        public RegexRule(String regex, String replace_to)
+        public final int success_next_index;
+        public RegexRule(String regex, String replace_to, int success_next_index)
         {
             pattern = Pattern.compile(regex);
             this.replace_to = replace_to;
+            this.success_next_index = success_next_index;
         }
 
         public String process(String text) throws NoMatch
