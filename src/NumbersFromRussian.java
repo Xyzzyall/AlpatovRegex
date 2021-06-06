@@ -36,7 +36,7 @@ public class NumbersFromRussian
             new RegexRule("(^сто$)|(^ста$)", "100", 27),
     };
 
-    protected String text; // я добавил комментарий
+    protected String text; // я добавил комментарий снова
 
     protected NumbersFromRussian(String from)
     {
