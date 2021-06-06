@@ -16,4 +16,4 @@ addons:
 
 script:
   - java --version
-  - mvn clean install org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Xyzzyall_AlpatovRegex
